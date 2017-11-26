@@ -17,7 +17,7 @@ class HICollectionViewFlowLayout: UICollectionViewFlowLayout {
 
     private var dynamicAnimator: UIDynamicAnimator!
     private var visibleIndexPaths = Set<IndexPath>()
-    private var latestDelta: CGFloat = 0
+//    private var latestDelta: CGFloat = 0
 
     // MARK: - Initialization
 
@@ -69,37 +69,42 @@ class HICollectionViewFlowLayout: UICollectionViewFlowLayout {
         guard let collectionView = collectionView else { return nil }
         let dynamicItems = dynamicAnimator.items(in: rect) as? [UICollectionViewLayoutAttributes]
         dynamicItems?.forEach { item in
-            let convertedY = item.center.y - collectionView.contentOffset.y    - sectionInset.top
-//            item.zIndex = item.indexPath.row
+            if item.representedElementCategory == .cell {
+                item.transform3D = transformIdentity
+                let convertedY = item.center.y - collectionView.contentOffset.y - sectionInset.top
+    //            item.zIndex = item.indexPath.row
 
-            transformItemIfNeeded(y: convertedY, item: item)
+                transformItemIfNeeded(y: convertedY, item: item)
+            }
         }
         return dynamicItems
     }
 
     private func transformItemIfNeeded(y: CGFloat, item: UICollectionViewLayoutAttributes) {
-        let itemSize = item.frame.size
-        guard itemSize.height > 0, y < itemSize.height * 0.5 else {
+        let height = item.frame.size.height
+        guard height > 0, y < height * 0.5 else {
             return
         }
 
-        let scaleFactor: CGFloat = scaleDistributor(x: y, itemHeight: item.frame.height)
+        let scaleFactor = scaleDistributor(x: y, height: height)
 
-        let yDelta = itemSize.height * 0.5 - y//getYDelta(y: y, itemHeight: item.frame.height)
+        let yDelta = height * 0.5 - y//getYDelta(y: y, itemHeight: item.frame.height)
+        item.center.y += yDelta
+//        item.frame = item.frame.insetBy(dx: yDelta*0.1, dy: yDelta*0.1)
+        item.transform3D = CATransform3DTranslate(transformIdentity, 0, 0, -yDelta)
+        item.transform3D = CATransform3DScale(item.transform3D, scaleFactor, scaleFactor, 0)
 
-        item.transform3D = CATransform3DTranslate(transformIdentity, 0, yDelta, -yDelta)
-        item.transform3D = CATransform3DScale(item.transform3D, scaleFactor, scaleFactor, scaleFactor)
-        item.alpha = scaleDistributor(x: y, itemHeight: item.frame.height)
+//        item.alpha = scaleDistributor(x: y, itemHeight: item.frame.height)
     }
 
     override open func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
-        return dynamicAnimator.layoutAttributesForCell(at: indexPath)!
+        return dynamicAnimator.layoutAttributesForCell(at: indexPath)
     }
 
     override open func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
-        let scrollView = self.collectionView!
-        let delta = newBounds.origin.y - scrollView.bounds.origin.y
-        latestDelta = delta
+//        let scrollView = self.collectionView!
+//        let delta = newBounds.origin.y - scrollView.bounds.origin.y
+//        latestDelta = delta
 
 //        let touchLocation = collectionView!.panGestureRecognizer.location(in: collectionView)
 
@@ -174,18 +179,27 @@ class HICollectionViewFlowLayout: UICollectionViewFlowLayout {
      - parameter threshold: The x coordinate where function gets value 1.
      - parameter xOrigin: x coordinate of the function origin.
      */
-    private func distributor(x: CGFloat, threshold: CGFloat, xOrigin: CGFloat) -> CGFloat {
-        guard threshold > xOrigin else {
-            return 1
-        }
-        var arg = (x - xOrigin)/(threshold - xOrigin)
-        arg = arg <= 0 ? 0 : arg
-        let y = sqrt(arg)
-        return y > 1 ? 1 : y
-    }
+//    private func distributor(x: CGFloat, threshold: CGFloat, xOrigin: CGFloat) -> CGFloat {
+//        guard threshold > xOrigin else { return 1 }
+//        var arg = (x - xOrigin)/(threshold - xOrigin)
+//        arg = max(0, arg)
+//        let y = sqrt(arg)
+//        return min(1, y)
+//    }
 
-    private func scaleDistributor(x: CGFloat, itemHeight: CGFloat) -> CGFloat {
-        return distributor(x: x, threshold: itemHeight * 0.5, xOrigin: -itemHeight * 5)
+    private func scaleDistributor(x: CGFloat, height: CGFloat) -> CGFloat {
+        let threshold = height * 0.5
+        let xOrigin = -height * 4
+
+        guard threshold > xOrigin else { return 1 }
+        var arg = (x - xOrigin)/(threshold - xOrigin)
+        arg = max(0, arg)
+        let y = sqrt(arg)
+        return min(1, y)
+
+
+
+//        return distributor(x: x, threshold: height * 0.5, xOrigin: -height * 4)
     }
 
 //    private func alphaDistributor(x: CGFloat, itemHeight: CGFloat) -> CGFloat {

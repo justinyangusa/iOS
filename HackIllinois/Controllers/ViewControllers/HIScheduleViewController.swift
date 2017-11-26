@@ -145,6 +145,6 @@ extension HIScheduleViewController {
     override func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         super.controllerDidChangeContent(controller)
         collectionView?.reloadData()
-        (collectionView?.collectionViewLayout as? HICollectionViewFlowLayout)?.resetLayout()
+//        (collectionView?.collectionViewLayout as? HICollectionViewFlowLayout)?.resetLayout()
     }
 }
