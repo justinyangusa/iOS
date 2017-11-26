@@ -379,8 +379,8 @@
 				95DE25041FC3FCF7000F599D /* HIBaseViewController+NSFetchedResultsControllerDelegate.swift */,
 				95DE25061FC3FCF7000F599D /* HIBaseViewController+UICollectionViewDataSource.swift */,
 				953C54781FC7A93400B566C9 /* HIBaseViewController+UICollectionViewDelegateFlowLayout.swift */,
-				95DE25071FC3FCF7000F599D /* HIBaseViewController+UITextFieldDelegate.swift */,
 				95CF9D761FC7E38D00A3C69A /* HIBaseViewController+UIRefreshControl.swift */,
+				95DE25071FC3FCF7000F599D /* HIBaseViewController+UITextFieldDelegate.swift */,
 			);
 			path = HIBaseViewController;
 			sourceTree = "<group>";

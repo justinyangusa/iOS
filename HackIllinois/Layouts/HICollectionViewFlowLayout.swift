@@ -14,8 +14,6 @@ class HICollectionViewFlowLayout: UICollectionViewFlowLayout {
                                                   m21: 0, m22: 1, m23: 0, m24: 0,
                                                   m31: 0, m32: 0, m33: 1, m34: 0,
                                                   m41: 0, m42: 0, m43: 0, m44: 1)
-    open var springHardness: CGFloat = 15
-    open var isPagingEnabled: Bool = true
 
     private var dynamicAnimator: UIDynamicAnimator!
     private var visibleIndexPaths = Set<IndexPath>()
@@ -67,26 +65,13 @@ class HICollectionViewFlowLayout: UICollectionViewFlowLayout {
         addBehaviors(for: newlyVisibleItems)
     }
 
-    open override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint,
-                                           withScrollingVelocity velocity: CGPoint) -> CGPoint {
-        let latestOffset = super.targetContentOffset(forProposedContentOffset: proposedContentOffset, withScrollingVelocity: velocity)
-        guard isPagingEnabled else {
-            return latestOffset
-        }
-
-        let row = ((proposedContentOffset.y) / (itemSize.height + minimumLineSpacing)).rounded()
-
-        let calculatedOffset = row * itemSize.height + row * minimumLineSpacing
-        let targetOffset = CGPoint(x: latestOffset.x, y: calculatedOffset)
-        return targetOffset
-    }
-
     override open func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         guard let collectionView = collectionView else { return nil }
         let dynamicItems = dynamicAnimator.items(in: rect) as? [UICollectionViewLayoutAttributes]
         dynamicItems?.forEach { item in
             let convertedY = item.center.y - collectionView.contentOffset.y    - sectionInset.top
-            item.zIndex = item.indexPath.row
+//            item.zIndex = item.indexPath.row
+
             transformItemIfNeeded(y: convertedY, item: item)
         }
         return dynamicItems
@@ -98,14 +83,13 @@ class HICollectionViewFlowLayout: UICollectionViewFlowLayout {
             return
         }
 
-        let scaleFactor: CGFloat = scaleDistributor(x: y)
+        let scaleFactor: CGFloat = scaleDistributor(x: y, itemHeight: item.frame.height)
 
-        let yDelta = getYDelta(y: y)
+        let yDelta = itemSize.height * 0.5 - y//getYDelta(y: y, itemHeight: item.frame.height)
 
-        item.transform3D = CATransform3DTranslate(transformIdentity, 0, yDelta, 0)
+        item.transform3D = CATransform3DTranslate(transformIdentity, 0, yDelta, -yDelta)
         item.transform3D = CATransform3DScale(item.transform3D, scaleFactor, scaleFactor, scaleFactor)
-        item.alpha = alphaDistributor(x: y)
-
+        item.alpha = scaleDistributor(x: y, itemHeight: item.frame.height)
     }
 
     override open func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
@@ -117,11 +101,11 @@ class HICollectionViewFlowLayout: UICollectionViewFlowLayout {
         let delta = newBounds.origin.y - scrollView.bounds.origin.y
         latestDelta = delta
 
-        let touchLocation = collectionView!.panGestureRecognizer.location(in: collectionView)
+//        let touchLocation = collectionView!.panGestureRecognizer.location(in: collectionView)
 
         dynamicAnimator.behaviors.flatMap { $0 as? UIAttachmentBehavior }.forEach { behavior in
             let attrs = behavior.items.first as! UICollectionViewLayoutAttributes
-            attrs.center = getUpdatedBehaviorItemCenter(behavior: behavior, touchLocation: touchLocation)
+//            attrs.center = getUpdatedBehaviorItemCenter(behavior: behavior, touchLocation: touchLocation)
             self.dynamicAnimator.updateItem(usingCurrentState: attrs)
         }
         return false
@@ -147,40 +131,40 @@ class HICollectionViewFlowLayout: UICollectionViewFlowLayout {
     }
 
     private func addBehaviors(for items: [UICollectionViewLayoutAttributes]) {
-        guard let collectionView = collectionView else { return }
-        let touchLocation = collectionView.panGestureRecognizer.location(in: collectionView)
+//        guard let collectionView = collectionView else { return }
+//        let touchLocation = collectionView.panGestureRecognizer.location(in: collectionView)
 
         items.forEach { item in
             let springBehaviour = UIAttachmentBehavior(item: item, attachedToAnchor: item.center)
+//
+//            springBehaviour.length = 0.0
+//            springBehaviour.damping = 0.8
+//            springBehaviour.frequency = 1.0
 
-            springBehaviour.length = 0.0
-            springBehaviour.damping = 0.8
-            springBehaviour.frequency = 1.0
-
-            if !CGPoint.zero.equalTo(touchLocation) {
-                item.center = getUpdatedBehaviorItemCenter(behavior: springBehaviour, touchLocation: touchLocation)
-            }
+//            if !CGPoint.zero.equalTo(touchLocation) {
+//                item.center = getUpdatedBehaviorItemCenter(behavior: springBehaviour, touchLocation: touchLocation)
+//            }
 
             self.dynamicAnimator.addBehavior(springBehaviour)
             self.visibleIndexPaths.insert(item.indexPath)
         }
     }
 
-    private func getUpdatedBehaviorItemCenter(behavior: UIAttachmentBehavior,
-                                              touchLocation: CGPoint) -> CGPoint {
-        let yDistanceFromTouch = fabs(touchLocation.y - behavior.anchorPoint.y)
-        let xDistanceFromTouch = fabs(touchLocation.x - behavior.anchorPoint.x)
-        let scrollResistance = (yDistanceFromTouch + xDistanceFromTouch) / (springHardness * 100)
-
-        let attrs = behavior.items.first as! UICollectionViewLayoutAttributes
-        var center = attrs.center
-        if latestDelta < 0 {
-            center.y += max(latestDelta, latestDelta * scrollResistance)
-        } else {
-            center.y += min(latestDelta, latestDelta * scrollResistance)
-        }
-        return center
-    }
+//    private func getUpdatedBehaviorItemCenter(behavior: UIAttachmentBehavior,
+//                                              touchLocation: CGPoint) -> CGPoint {
+//        let yDistanceFromTouch = fabs(touchLocation.y - behavior.anchorPoint.y)
+//        let xDistanceFromTouch = fabs(touchLocation.x - behavior.anchorPoint.x)
+//        let scrollResistance = (yDistanceFromTouch + xDistanceFromTouch) / (15 * 100)
+//
+//        let attrs = behavior.items.first as! UICollectionViewLayoutAttributes
+//        var center = attrs.center
+//        if latestDelta < 0 {
+//            center.y += max(latestDelta, latestDelta * scrollResistance)
+//        } else {
+//            center.y += min(latestDelta, latestDelta * scrollResistance)
+//        }
+//        return center
+//    }
 
     // MARK: - Distribution functions
 
@@ -200,17 +184,17 @@ class HICollectionViewFlowLayout: UICollectionViewFlowLayout {
         return y > 1 ? 1 : y
     }
 
-    private func scaleDistributor(x: CGFloat) -> CGFloat {
-        return distributor(x: x, threshold: itemSize.height * 0.5, xOrigin: -itemSize.height * 5)
+    private func scaleDistributor(x: CGFloat, itemHeight: CGFloat) -> CGFloat {
+        return distributor(x: x, threshold: itemHeight * 0.5, xOrigin: -itemHeight * 5)
     }
 
-    private func alphaDistributor(x: CGFloat) -> CGFloat {
-        return distributor(x: x, threshold: itemSize.height * 0.5, xOrigin: -itemSize.height)
-    }
+//    private func alphaDistributor(x: CGFloat, itemHeight: CGFloat) -> CGFloat {
+//        return distributor(x: x, threshold: itemHeight * 0.5, xOrigin: -itemHeight)
+//    }
 
-    private func getYDelta(y: CGFloat) -> CGFloat {
-        return itemSize.height * 0.5 - y
-    }
+//    private func getYDelta(y: CGFloat, itemHeight: CGFloat) -> CGFloat {
+//        return itemHeight * 0.5 - y
+//    }
 
 
 }
@@ -219,21 +203,17 @@ class HICollectionViewFlowLayout: UICollectionViewFlowLayout {
 // MARK: - Cell-wise paging
 extension HICollectionViewFlowLayout  {
 
-//    open override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {
-//        let latestOffset = super.targetContentOffset(forProposedContentOffset: proposedContentOffset, withScrollingVelocity: velocity)
-//
-//        guard let collectionView = collectionView else { return latestOffset }
-//
-//        let row = roun(
-//
-//            (proposedContentOffset.y / (itemSize.height + minimumLineSpacing)).rounded()
-//
-//        let calculatedOffset = row * itemSize.height + row * minimumLineSpacing
-//        let targetOffset = CGPoint(x: latestOffset.x, y: calculatedOffset)
-//        return targetOffset
-//    }
+    override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint,
+                                           withScrollingVelocity velocity: CGPoint) -> CGPoint {
+        let latestOffset = super.targetContentOffset(forProposedContentOffset: proposedContentOffset, withScrollingVelocity: velocity)
 
-    
+        let row = ((proposedContentOffset.y) / (itemSize.height + minimumLineSpacing)).rounded()
+
+        let calculatedOffset = row * itemSize.height + row * minimumLineSpacing
+        let targetOffset = CGPoint(x: latestOffset.x, y: calculatedOffset)
+        return targetOffset
+    }
+
 }
 
 
