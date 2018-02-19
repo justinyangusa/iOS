@@ -14,10 +14,17 @@ class HISegmentedControl: UIControl {
     // MARK: - Properties
     private(set) var items: [String]
 
-    private(set) var selectedIndex: Int = 0 {
-        didSet {
-            if oldValue != selectedIndex {
-                displayNewSelectedIndex(previousIndex: oldValue)
+    private var _selectedIndex = 0
+    var selectedIndex: Int {
+        return _selectedIndex
+    }
+
+    func set(selectedIndex: Int, shouldSendControlEvents: Bool = true) {
+        if selectedIndex != self.selectedIndex {
+            let oldValue = self.selectedIndex
+            _selectedIndex = selectedIndex
+            displayNewSelectedIndex(previousIndex: oldValue)
+            if shouldSendControlEvents {
                 sendActions(for: .valueChanged)
             }
         }
@@ -35,6 +42,8 @@ class HISegmentedControl: UIControl {
     private var bottomView = UIView()
     private var bottomViewColor = HIApplication.Color.hotPink
     private var bottomViewHeight = CGFloat(1)
+
+    var animator: UIViewPropertyAnimator?
 
     // MARK: - Init
     init(items: [String]) {
@@ -66,7 +75,7 @@ class HISegmentedControl: UIControl {
 
         for (index, label) in labels.enumerated() {
             if label.frame.contains(location) {
-                selectedIndex = index
+                set(selectedIndex: index)
                 break
             }
         }
@@ -107,11 +116,11 @@ class HISegmentedControl: UIControl {
         previousLabel.textColor = unselectedLabelColor
         selectedLabel.textColor = selectedLabelColor
 
-        let animator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 0.8)
-        animator.addAnimations {
+        animator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 0.8)
+        animator?.addAnimations {
             self.indicatorView.frame.origin.x = selectedLabel.frame.origin.x
         }
-        animator.startAnimation()
+        animator?.startAnimation()
     }
 
     private func constrain(labels: [UIView]) {

@@ -81,8 +81,8 @@ extension HIApplicationStateController {
 
     func viewControllersFor(user: HIUser) -> [UIViewController] {
         var viewControllers = [UIViewController]()
+        viewControllers.append(HIScheduleController())
         viewControllers.append(HIHomeViewController())
-        viewControllers.append(HIScheduleViewController())
         viewControllers.append(HIAnnouncementsViewController())
         viewControllers.append(HIUserDetailViewController())
 
