@@ -99,21 +99,22 @@ extension HIScheduleController {
 extension HIScheduleController: UIPageViewControllerDelegate {
     // Sent when a gesture-initiated transition begins.
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
-//        guard let viewController = pendingViewControllers.first,
-//            let index = schedulePages.index(of: viewController) else { return }
-//        segmentedControl?.set(selectedIndex: index)
+        guard let viewController = pendingViewControllers.first,
+            let index = schedulePages.index(of: viewController) else { return }
+        segmentedControl?.set(selectedIndex: index)
     }
 
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         if !completed {
             guard let viewController = previousViewControllers.first,
                 let index = schedulePages.index(of: viewController) else { return }
-            segmentedControl?.set(selectedIndex: index)
-        } else {
-            guard let viewController = pageViewController.viewControllers?.first,
-                let index = schedulePages.index(of: viewController) else { return }
-            segmentedControl?.set(selectedIndex: index)
+            segmentedControl?.set(selectedIndex: index, shouldSendControlEvents: false)
         }
+//        } else {
+//            guard let viewController = pageViewController.viewControllers?.first,
+//                let index = schedulePages.index(of: viewController) else { return }
+//            segmentedControl?.set(selectedIndex: index)
+//        }
     }
 }
 
