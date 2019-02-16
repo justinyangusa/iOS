@@ -38,8 +38,8 @@ class HIHomeViewController: HIEventListViewController {
         return fetchedResultsController
     }()
 
+    // MARK: Tabs
     private var currentTab = 0
-
     private var dataStore: [(displayText: String, predicate: NSPredicate)] = {
         var dataStore = [(displayText: String, predicate: NSPredicate)]()
         let happeningNowPredicate = NSPredicate(format: "(startTime < now()) AND (endTime > now())")
@@ -52,12 +52,10 @@ class HIHomeViewController: HIEventListViewController {
         return dataStore
     }()
 
-    private let countdownTitleLabel = HILabel(style: .title)
-    private lazy var countdownViewController = HICountdownViewController(delegate: self)
-    private let happeningNowLabel = HILabel(style: .title) {
-        $0.text = "HAPPENING NOW"
-    }
+    // MARK: Refresh
+    private var timer: Timer?
 
+    // MARK: Countdown
     private var countdownDataStoreIndex = 0
     private var staticDataStore: [(date: Date, displayText: String)] = [
         (HIConstants.EVENT_START_TIME, "HACKILLINOIS BEGINS IN"),
@@ -66,7 +64,41 @@ class HIHomeViewController: HIEventListViewController {
         (HIConstants.EVENT_END_TIME, "HACKILLINOIS ENDS IN")
     ]
 
-    private var timer: Timer?
+    // MARK: Views
+    private let countdownContainerView = HIView {
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.backgroundHIColor = \.baseBackground
+    }
+    private let countdownInnerContainerView = HIView {
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.backgroundHIColor = \.baseBackground
+    }
+    private let countdownTitleLabel = HILabel(style: .title) {
+        $0.textAlignment = .center
+        $0.numberOfLines = 0
+        $0.setContentCompressionResistancePriority(.required, for: .vertical)
+    }
+    private lazy var countdownViewController = HICountdownViewController(delegate: self)
+    private let eventsContainerView = HIView {
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.backgroundHIColor = \.baseBackground
+    }
+    private lazy var eventPredicateSegmentedControl = HISegmentedControl(items: dataStore.map { $0.displayText })
+
+    // MARK: Constraints
+    private var countdownContainerVerticalLayoutTrailingConstraint: NSLayoutConstraint?
+    private var countdownContainerVerticalLayoutBottomConstraint: NSLayoutConstraint?
+    private var eventsContainerVerticalLayoutTopConstraint: NSLayoutConstraint?
+    private var eventsContainerVerticalLayoutLeadingConstraint: NSLayoutConstraint?
+    private var verticalLayoutHeightConstraint: NSLayoutConstraint?
+
+    private var countdownContainerHorizontalLayoutTrailingConstraint: NSLayoutConstraint?
+    private var countdownContainerHorizontalLayoutBottomConstraint: NSLayoutConstraint?
+    private var eventsContainerHorizontalLayoutTopConstraint: NSLayoutConstraint?
+    private var eventsContainerHorizontalLayoutLeadingConstraint: NSLayoutConstraint?
+    private var horizontalLayoutWidthConstraint: NSLayoutConstraint?
+    private var horizontalLayoutCenterConstraint: NSLayoutConstraint?
+
 }
 
 // MARK: - Actions
@@ -96,32 +128,66 @@ extension HIHomeViewController {
     override func loadView() {
         super.loadView()
 
-        view.addSubview(countdownTitleLabel)
-        countdownTitleLabel.constrain(to: view.safeAreaLayoutGuide, topInset: 20, trailingInset: 0, leadingInset: 0)
+        view.addSubview(countdownContainerView)
+        view.addSubview(eventsContainerView)
+        countdownContainerView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        countdownContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+
+        countdownContainerVerticalLayoutTrailingConstraint =
+            countdownContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        countdownContainerVerticalLayoutBottomConstraint =
+            countdownContainerView.bottomAnchor.constraint(equalTo: eventsContainerView.topAnchor)
+        countdownContainerHorizontalLayoutTrailingConstraint =
+            countdownContainerView.trailingAnchor.constraint(equalTo: eventsContainerView.leadingAnchor)
+        countdownContainerHorizontalLayoutBottomConstraint =
+            countdownContainerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+
+        eventsContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        eventsContainerView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+
+        eventsContainerVerticalLayoutTopConstraint =
+            eventsContainerView.topAnchor.constraint(equalTo: countdownContainerView.bottomAnchor)
+        eventsContainerVerticalLayoutLeadingConstraint =
+            eventsContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor)
+        eventsContainerHorizontalLayoutTopConstraint =
+            eventsContainerView.topAnchor.constraint(equalTo: view.topAnchor)
+        eventsContainerHorizontalLayoutLeadingConstraint =
+            eventsContainerView.leadingAnchor.constraint(equalTo: countdownContainerView.trailingAnchor)
+
+        horizontalLayoutWidthConstraint =
+            countdownContainerView.widthAnchor.constraint(equalTo: eventsContainerView.widthAnchor)
+
+        // CountdownContainerView
+        countdownContainerView.addSubview(countdownInnerContainerView)
+        countdownInnerContainerView.constrain(to: countdownContainerView, trailingInset: 0, leadingInset: 0)
+        horizontalLayoutCenterConstraint =
+            countdownInnerContainerView.centerYAnchor.constraint(equalTo: countdownContainerView.centerYAnchor, constant: -40)
+        verticalLayoutHeightConstraint =
+            countdownInnerContainerView.heightAnchor.constraint(equalTo: countdownContainerView.heightAnchor)
+
+        countdownInnerContainerView.addSubview(countdownTitleLabel)
+        countdownTitleLabel.constrain(to: countdownInnerContainerView.safeAreaLayoutGuide, topInset: 20, trailingInset: 0, leadingInset: 0)
 
         countdownViewController.view.translatesAutoresizingMaskIntoConstraints = false
         addChild(countdownViewController)
-        view.addSubview(countdownViewController.view)
+        countdownInnerContainerView.addSubview(countdownViewController.view)
         countdownViewController.view.topAnchor.constraint(equalTo: countdownTitleLabel.bottomAnchor, constant: 8).isActive = true
-        countdownViewController.view.constrain(to: view.safeAreaLayoutGuide, trailingInset: -20, leadingInset: 20)
-        countdownViewController.view.constrain(height: 150)
+        countdownViewController.view.bottomAnchor.constraint(equalTo: countdownInnerContainerView.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        countdownViewController.view.constrain(to: countdownInnerContainerView.safeAreaLayoutGuide, trailingInset: -20, leadingInset: 20)
+        countdownViewController.view.heightAnchor.constraint(equalToConstant: 150).isActive = true
         countdownViewController.didMove(toParent: self)
 
-        let items = dataStore.map { $0.displayText }
-        let segmentedControl = HISegmentedControl(items: items)
-        segmentedControl.addTarget(self, action: #selector(didSelectTab(_:)), for: .valueChanged)
-        segmentedControl.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(segmentedControl)
-        segmentedControl.topAnchor.constraint(equalTo: countdownViewController.view.bottomAnchor).isActive = true
-        segmentedControl.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 12).isActive = true
-        segmentedControl.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -12).isActive = true
-        segmentedControl.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        // EventsContainerView
+        eventPredicateSegmentedControl.addTarget(self, action: #selector(didSelectTab(_:)), for: .valueChanged)
+        eventsContainerView.addSubview(eventPredicateSegmentedControl)
+        eventPredicateSegmentedControl.constrain(to: eventsContainerView.safeAreaLayoutGuide, topInset: 0, trailingInset: -12, leadingInset: 12)
+        eventPredicateSegmentedControl.heightAnchor.constraint(equalToConstant: 50).isActive = true
 
         let tableView = HITableView()
-        view.addSubview(tableView)
-        tableView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 5).isActive = true
-        tableView.constrain(to: view.safeAreaLayoutGuide, trailingInset: 0, leadingInset: 0)
-        tableView.constrain(to: view, bottomInset: 0)
+        eventsContainerView.addSubview(tableView)
+        tableView.topAnchor.constraint(equalTo: eventPredicateSegmentedControl.bottomAnchor).isActive = true
+        tableView.constrain(to: eventsContainerView.safeAreaLayoutGuide, trailingInset: 0, leadingInset: 0)
+        tableView.constrain(to: eventsContainerView, bottomInset: 0)
         self.tableView = tableView
     }
 
@@ -134,11 +200,50 @@ extension HIHomeViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupPredicateRefreshTimer()
+        activateContraints(for: view.frame.size)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         teardownPredicateRefreshTimer()
+    }
+
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        view.layoutIfNeeded()
+        activateContraints(for: size)
+        coordinator.animate(alongsideTransition: { [weak self] (_) in
+            self?.view.layoutIfNeeded()
+        }, completion: nil)
+    }
+
+    func activateContraints(for size: CGSize) {
+        if size.height > size.width {
+            countdownContainerVerticalLayoutTrailingConstraint?.isActive = true
+            countdownContainerVerticalLayoutBottomConstraint?.isActive = true
+            eventsContainerVerticalLayoutTopConstraint?.isActive = true
+            eventsContainerVerticalLayoutLeadingConstraint?.isActive = true
+            verticalLayoutHeightConstraint?.isActive = true
+
+            eventsContainerHorizontalLayoutTopConstraint?.isActive = false
+            eventsContainerHorizontalLayoutLeadingConstraint?.isActive = false
+            countdownContainerHorizontalLayoutTrailingConstraint?.isActive = false
+            countdownContainerHorizontalLayoutBottomConstraint?.isActive = false
+            horizontalLayoutWidthConstraint?.isActive = false
+            horizontalLayoutCenterConstraint?.isActive = false
+        } else {
+            countdownContainerVerticalLayoutTrailingConstraint?.isActive = false
+            countdownContainerVerticalLayoutBottomConstraint?.isActive = false
+            eventsContainerVerticalLayoutTopConstraint?.isActive = false
+            eventsContainerVerticalLayoutLeadingConstraint?.isActive = false
+            verticalLayoutHeightConstraint?.isActive = false
+
+            eventsContainerHorizontalLayoutTopConstraint?.isActive = true
+            eventsContainerHorizontalLayoutLeadingConstraint?.isActive = true
+            countdownContainerHorizontalLayoutTrailingConstraint?.isActive = true
+            countdownContainerHorizontalLayoutBottomConstraint?.isActive = true
+            horizontalLayoutWidthConstraint?.isActive = true
+            horizontalLayoutCenterConstraint?.isActive = true
+        }
     }
 }
 
@@ -177,7 +282,6 @@ extension HIHomeViewController {
     }
 
     @objc func refreshPredicate() {
-        updatePredicate()
         try? fetchedResultsController.performFetch()
         animateTableViewReload()
     }
