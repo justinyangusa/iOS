@@ -41,27 +41,18 @@ class HIScheduleViewController: HIEventListViewController {
     private var currentTab = 0
     private var onlyFavorites = false
     private let onlyFavoritesPredicate = NSPredicate(format: "favorite == YES" )
+    private let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE"
+        return formatter
+    }()
     private var dataStore: [(displayText: String, predicate: NSPredicate)] = {
         var dataStore = [(displayText: String, predicate: NSPredicate)]()
-        let fridayPredicate = NSPredicate(
-            format: "%@ =< startTime AND startTime < %@",
-            HIConstants.FRIDAY_START_TIME as NSDate,
-            HIConstants.FRIDAY_END_TIME as NSDate
-        )
+        let fridayPredicate = NSPredicate(format: "Friday == dateFormatter.string(from: Date(startTime))")
+        let saturdayPredicate = NSPredicate(format: "Saturday == dateFormatter.string(from: Date(startTime))")
+        let sundayPredicate = NSPredicate(format: "Sunday == dateFormatter.string(from: Date(startTime))")
         dataStore.append((displayText: "FRIDAY", predicate: fridayPredicate))
-
-        let saturdayPredicate = NSPredicate(
-            format: "%@ =< startTime AND startTime < %@",
-            HIConstants.SATURDAY_START_TIME as NSDate,
-            HIConstants.SATURDAY_END_TIME as NSDate
-        )
         dataStore.append((displayText: "SATURDAY", predicate: saturdayPredicate))
-
-        let sundayPredicate = NSPredicate(
-            format: "%@ =< startTime AND startTime < %@",
-            HIConstants.SUNDAY_START_TIME as NSDate,
-            HIConstants.SUNDAY_END_TIME as NSDate
-        )
         dataStore.append((displayText: "SUNDAY", predicate: sundayPredicate))
         return dataStore
     }()
