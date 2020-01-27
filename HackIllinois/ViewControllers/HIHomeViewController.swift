@@ -67,6 +67,7 @@ class HIHomeViewController: HIEventListViewController {
     ]
 
     private var timer: Timer?
+    private var eventTableView = HITableView()
 }
 
 // MARK: - Actions
@@ -107,28 +108,19 @@ extension HIHomeViewController {
         countdownViewController.view.constrain(height: 150)
         countdownViewController.didMove(toParent: self)
 
-        let items = dataStore.map { $0.displayText }
-        let segmentedControl = HISegmentedControl(items: items)
-        segmentedControl.addTarget(self, action: #selector(didSelectTab(_:)), for: .valueChanged)
-        segmentedControl.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(segmentedControl)
-        segmentedControl.topAnchor.constraint(equalTo: countdownViewController.view.bottomAnchor).isActive = true
-        segmentedControl.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 12).isActive = true
-        segmentedControl.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -12).isActive = true
-        segmentedControl.heightAnchor.constraint(equalToConstant: 44).isActive = true
-
-        let tableView = HITableView()
-        view.addSubview(tableView)
-        tableView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 5).isActive = true
-        tableView.constrain(to: view.safeAreaLayoutGuide, trailingInset: 0, leadingInset: 0)
-        tableView.constrain(to: view, bottomInset: 0)
-        self.tableView = tableView
+        view.addSubview(eventTableView)
+        eventTableView.topAnchor.constraint(equalTo: countdownViewController.view.bottomAnchor).isActive = true
+        eventTableView.constrain(to: view.safeAreaLayoutGuide, trailingInset: 0, leadingInset: 0)
+        eventTableView.constrain(to: view, bottomInset: 0)
+        eventTableView.contentInset = UIEdgeInsets(top: 30, left: 0, bottom: 0, right: 0)
+        eventTableView.scrollIndicatorInsets = UIEdgeInsets(top: 30, left: 0, bottom: 0, right: 0)
     }
 
     override func viewDidLoad() {
         _fetchedResultsController = fetchedResultsController as? NSFetchedResultsController<NSManagedObject>
         super.viewDidLoad()
         setupRefreshControl()
+        setupEventTableView()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -142,11 +134,75 @@ extension HIHomeViewController {
     }
 }
 
+// MARK: - UITableViewSetup Setup
+extension HIHomeViewController {
+    func setupEventTableView() {
+        eventTableView.delegate = self
+        eventTableView.dataSource = self
+        eventTableView.register(HIHomeHeader.self, forHeaderFooterViewReuseIdentifier: HIHomeHeader.identifier)
+        eventTableView.register(HIEventCell.self, forCellReuseIdentifier: HIEventCell.identifier)
+    }
+
+}
+
 // MARK: - UINavigationItem Setup
 extension HIHomeViewController {
     @objc dynamic override func setupNavigationItem() {
         super.setupNavigationItem()
         title = "HOME"
+    }
+}
+
+// MARK: - UITableViewDataSource
+extension HIHomeViewController {
+    
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if section == 0 {
+            fetchedResultsController.fetchRequest.predicate = dataStore[0].predicate
+        } else if section == 1 {
+            fetchedResultsController.fetchRequest.predicate = dataStore[1].predicate
+        }
+       return 1
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if indexPath.section == 0 {
+            fetchedResultsController.fetchRequest.predicate = dataStore[0].predicate
+        } else if indexPath.section == 1 {
+            fetchedResultsController.fetchRequest.predicate = dataStore[1].predicate
+        }
+        let cell = tableView.dequeueReusableCell(withIdentifier: HIEventCell.identifier, for: indexPath)
+        if let cell = cell as? HIEventCell, let event = _fetchedResultsController?.object(at: indexPath) as? Event {
+            cell <- event
+            cell.delegate = self
+            cell.indexPath = indexPath
+        }
+        return cell
+    }
+    
+     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: HIHomeHeader.identifier)
+        if section == 0 {
+            if let header = header as? HIHomeHeader {
+                header.titleLabel.textHIColor = \.accent
+                header.titleLabel.text = "ONGOING"
+                header.titleLabel.textAlignment = .center
+                header.titleLabel.font = HIAppearance.Font.homeHeader
+            }
+        } else if section == 1 {
+            if let header = header as? HIHomeHeader {
+                header.titleLabel.textHIColor = \.baseText
+                header.titleLabel.text = "UPCOMING"
+                header.titleLabel.textAlignment = .center
+                header.titleLabel.font = HIAppearance.Font.homeHeader
+            }
+        }
+        return header
     }
 }
 
