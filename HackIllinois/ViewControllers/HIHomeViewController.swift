@@ -29,7 +29,7 @@ class HIHomeViewController: HIEventListViewController {
         let fetchedResultsController = NSFetchedResultsController(
             fetchRequest: fetchRequest,
             managedObjectContext: HICoreDataController.shared.viewContext,
-            sectionNameKeyPath: nil,
+            sectionNameKeyPath: "upcomingIdentifier",
             cacheName: nil
         )
 
@@ -83,7 +83,8 @@ extension HIHomeViewController {
     }
 
     func currentPredicate() -> NSPredicate {
-        return dataStore[currentTab].predicate
+        let inFifteenMinutes = Date(timeIntervalSinceNow: 900)
+        return NSPredicate(format: "(%@ > startTime) AND (now() < endTime)", inFifteenMinutes as NSDate)
     }
 
     func animateReload() {
@@ -155,27 +156,13 @@ extension HIHomeViewController {
 
 // MARK: - UITableViewDataSource
 extension HIHomeViewController {
-    
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        let numSec = super.numberOfSections(in: tableView)
+        print("SECTIONS::\(numSec)")
+        return numSec
     }
-    
-    
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 {
-            fetchedResultsController.fetchRequest.predicate = dataStore[0].predicate
-        } else if section == 1 {
-            fetchedResultsController.fetchRequest.predicate = dataStore[1].predicate
-        }
-       return 1
-    }
-    
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.section == 0 {
-            fetchedResultsController.fetchRequest.predicate = dataStore[0].predicate
-        } else if indexPath.section == 1 {
-            fetchedResultsController.fetchRequest.predicate = dataStore[1].predicate
-        }
         let cell = tableView.dequeueReusableCell(withIdentifier: HIEventCell.identifier, for: indexPath)
         if let cell = cell as? HIEventCell, let event = _fetchedResultsController?.object(at: indexPath) as? Event {
             cell <- event
@@ -184,7 +171,7 @@ extension HIHomeViewController {
         }
         return cell
     }
-    
+
      func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: HIHomeHeader.identifier)
         if section == 0 {

@@ -144,6 +144,14 @@ final class HIEventDataSource {
                                     coreDataEvent.sponsor = apiEvent.sponsor
                                     coreDataEvent.startTime = apiEvent.startTime
                                     coreDataEvent.favorite = apiFavorites.contains(coreDataEvent.id)
+                                    
+//                                    let inFifteenMinutes = Date(timeIntervalSinceNow: 900)
+//                                    let currTime = Date()
+//                                    
+//                                    if currTime < apiEvent.startTime {
+//                                        print("\(currTime)currtime<endtime::\(apiEvent.name)")
+//                                        coreDataEvent.upcomingIdentifier = 1 // 1 indiciates before now()
+//                                    }
                                 }
 
                                 // 10) Save changes, call completion handler, unlock refresh

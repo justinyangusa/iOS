@@ -21,6 +21,7 @@
         <attribute name="sectionIdentifier" transient="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="sponsor" attributeType="String"/>
         <attribute name="startTime" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="upcomingIdentifier" transient="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="locations" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Location" inverseName="events" inverseEntity="Location"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
@@ -56,7 +57,7 @@
     </entity>
     <elements>
         <element name="Announcement" positionX="-63" positionY="72" width="128" height="105"/>
-        <element name="Event" positionX="-54" positionY="36" width="128" height="178"/>
+        <element name="Event" positionX="-54" positionY="36" width="128" height="208"/>
         <element name="Location" positionX="-54" positionY="108" width="128" height="103"/>
         <element name="Project" positionX="-45" positionY="108" width="128" height="163"/>
     </elements>

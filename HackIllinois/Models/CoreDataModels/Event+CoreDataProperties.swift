@@ -30,6 +30,12 @@ extension Event {
     @NSManaged public var sponsor: String
     @NSManaged public var startTime: Date
 
+    @objc dynamic var upcomingIdentifier: Int {
+        let currTime = Date()
+        print("ASSIGNING\(name) \(currTime < startTime)")
+        return currTime < startTime ? 1 : 0
+    }
+
     @objc dynamic var sectionIdentifier: Date {
         let excessComponents: Set<Calendar.Component> = [.second, .nanosecond]
         return startTime.byRemoving(components: excessComponents)
