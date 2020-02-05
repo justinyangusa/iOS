@@ -74,14 +74,7 @@ extension HIApplicationStateController {
         viewControllers.append(HIScheduleViewController())
         viewControllers.append(HIUserDetailViewController())
         viewControllers.append(HIIndoorMapsViewController())
-        viewControllers.append(HIAnnouncementsViewController())
         viewControllers.append(HIProjectViewController())
-        viewControllers.append(HIIndoorMapsViewController())
-        viewControllers.append(HIAnnouncementsViewController())
-
-        if !user.roles.intersection([.staff, .admin]).isEmpty {
-            viewControllers.append(HICheckInScannerViewController())
-        }
 
         if user.roles.contains(.admin) {
             viewControllers.append(HIAdminStatsViewController())
@@ -127,6 +120,13 @@ extension HIApplicationStateController {
         let appViewControllers = viewControllersFor(user: user)
         appFlowController.setupMenuFor(appViewControllers)
         appFlowController.selectedIndex = 0
+
+        // Disable the middle tabbar button (QR Code)
+        if let items = appFlowController.tabBar.items {
+            if items.count >= 3 {
+                items[2].isEnabled = false
+            }
+        }
 
         HIEventDataSource.refresh()
         HIAnnouncementDataSource.refresh()

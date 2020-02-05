@@ -18,6 +18,7 @@
 		3C26401923ADE7AA004E1DBE /* Project+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C26401723ADE7AA004E1DBE /* Project+CoreDataProperties.swift */; };
 		3C26401B23ADE838004E1DBE /* ProjectService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C26401A23ADE838004E1DBE /* ProjectService.swift */; };
 		3C26401D23ADE8A5004E1DBE /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C26401C23ADE8A5004E1DBE /* Project.swift */; };
+		3C2D7D7523DFE854003FE98B /* HITabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2D7D7423DFE853003FE98B /* HITabBar.swift */; };
 		3C7E552723AA199900213E1F /* HITimeDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7E552623AA199900213E1F /* HITimeDataSource.swift */; };
 		3C8F62D4238F9639001A5DAF /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8F62D3238F9639001A5DAF /* Time.swift */; };
 		3C8F62D6238F9825001A5DAF /* TimeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8F62D5238F9825001A5DAF /* TimeService.swift */; };
@@ -115,6 +116,8 @@
 		A5163FEB221F2741003C543E /* HIAdminStatsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5163FEA221F2741003C543E /* HIAdminStatsViewController.swift */; };
 		A5163FED221F283C003C543E /* StatsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5163FEC221F283C003C543E /* StatsService.swift */; };
 		AC2B515223DE495D00567E98 /* HIHomeHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2B515123DE495D00567E98 /* HIHomeHeader.swift */; };
+		BCD0CA5123C4356300ADC89B /* HIPopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD0CA5023C4356300ADC89B /* HIPopupViewController.swift */; };
+		BCEBD2DA23DE995700D32F5A /* HIPopupAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEBD2D923DE995700D32F5A /* HIPopupAnimator.swift */; };
 		D3A309BC2211175200CBA351 /* PassKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3A309BB2211175200CBA351 /* PassKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -173,6 +176,7 @@
 		3C26401723ADE7AA004E1DBE /* Project+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Project+CoreDataProperties.swift"; path = "HackIllinois/Models/CoreDataModels/Project+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 		3C26401A23ADE838004E1DBE /* ProjectService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectService.swift; sourceTree = "<group>"; };
 		3C26401C23ADE8A5004E1DBE /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
+		3C2D7D7423DFE853003FE98B /* HITabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HITabBar.swift; sourceTree = "<group>"; };
 		3C7E552623AA199900213E1F /* HITimeDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HITimeDataSource.swift; sourceTree = "<group>"; };
 		3C8F62D3238F9639001A5DAF /* Time.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Time.swift; sourceTree = "<group>"; };
 		3C8F62D5238F9825001A5DAF /* TimeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeService.swift; sourceTree = "<group>"; };
@@ -270,6 +274,8 @@
 		A5163FEA221F2741003C543E /* HIAdminStatsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HIAdminStatsViewController.swift; sourceTree = "<group>"; };
 		A5163FEC221F283C003C543E /* StatsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsService.swift; sourceTree = "<group>"; };
 		AC2B515123DE495D00567E98 /* HIHomeHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HIHomeHeader.swift; sourceTree = "<group>"; };
+		BCD0CA5023C4356300ADC89B /* HIPopupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HIPopupViewController.swift; sourceTree = "<group>"; };
+		BCEBD2D923DE995700D32F5A /* HIPopupAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HIPopupAnimator.swift; path = HackIllinois/UI/Animations/HIPopupAnimator.swift; sourceTree = SOURCE_ROOT; };
 		D3A309BA221116A600CBA351 /* HackIllinois.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HackIllinois.entitlements; sourceTree = "<group>"; };
 		D3A309BB2211175200CBA351 /* PassKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PassKit.framework; path = System/Library/Frameworks/PassKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -316,6 +322,7 @@
 		95069260203EE14000D7C34C /* Animations */ = {
 			isa = PBXGroup;
 			children = (
+				BCEBD2D923DE995700D32F5A /* HIPopupAnimator.swift */,
 				95069261203EE14000D7C34C /* Countdown */,
 				952D1538220D37980041383A /* Refresh */,
 				95069267203EE14000D7C34C /* Launch */,
@@ -470,6 +477,7 @@
 				3CF8DB1423B41D0A0035ECAE /* HIProjectListViewController.swift */,
 				3CF8DB1623B41F350035ECAE /* HIProjectDetailViewController.swift */,
 				3CF8DB1823B42B240035ECAE /* HIProjectViewController.swift */,
+				BCD0CA5023C4356300ADC89B /* HIPopupViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -509,6 +517,7 @@
 				95D791EC203E370A00C3BA62 /* HIWindow.swift */,
 				95A7D27E203D4F54005EAEAF /* Identifiable.swift */,
 				95A7D280203D4F54005EAEAF /* TableView */,
+				3C2D7D7423DFE853003FE98B /* HITabBar.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -876,16 +885,19 @@
 				95FC79C121E0243D00715036 /* Operators.swift in Sources */,
 				95A7D294203D4F54005EAEAF /* HIDateHeader.swift in Sources */,
 				95D6DA7A203F983700E7C982 /* HILocalNotificationController.swift in Sources */,
+				3C2D7D7523DFE854003FE98B /* HITabBar.swift in Sources */,
 				95D791ED203E370A00C3BA62 /* HIWindow.swift in Sources */,
 				950AD60A23DE362B00463AF2 /* HITabBarController.swift in Sources */,
 				95A7D29C203D595F005EAEAF /* HITableView.swift in Sources */,
 				9510F6A01FCB7D6E007D19DB /* Announcement+CoreDataClass.swift in Sources */,
 				0A360882203539FF001F5F85 /* HIAdminEventViewController.swift in Sources */,
 				957D7CB81FC39EA100C4332A /* Formatters.swift in Sources */,
+				BCD0CA5123C4356300ADC89B /* HIPopupViewController.swift in Sources */,
 				95A7D296203D4F54005EAEAF /* HIEventDetailLocationCell.swift in Sources */,
 				95A7D29E203D5BA4005EAEAF /* HILabel.swift in Sources */,
 				956F41E31FC76C8E00557DC7 /* HIMenuController.swift in Sources */,
 				9510F6A51FCB7D6E007D19DB /* Announcement+CoreDataProperties.swift in Sources */,
+				BCEBD2DA23DE995700D32F5A /* HIPopupAnimator.swift in Sources */,
 				95FC79C321E024A700715036 /* Notifications.swift in Sources */,
 				95FC79BE21E0199600715036 /* HIAppearance.swift in Sources */,
 				35B4A45021E091BA001B3AF0 /* HIError.swift in Sources */,
@@ -944,10 +956,12 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 8VNQTQM2L6;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = Stickers/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 2020.1;
 				PRODUCT_BUNDLE_IDENTIFIER = org.hackillinois.ios.stickers;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -963,10 +977,12 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 8VNQTQM2L6;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = Stickers/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 2020.1;
 				PRODUCT_BUNDLE_IDENTIFIER = org.hackillinois.ios.stickers;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1093,12 +1109,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = HackIllinois/HackIllinois.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 8VNQTQM2L6;
 				INFOPLIST_FILE = HackIllinois/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 2020.1;
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -Xfrontend -warn-long-expression-type-checking=150";
 				PRODUCT_BUNDLE_IDENTIFIER = org.hackillinois.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1114,12 +1132,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = HackIllinois/HackIllinois.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 8VNQTQM2L6;
 				INFOPLIST_FILE = HackIllinois/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 2020.1;
 				PRODUCT_BUNDLE_IDENTIFIER = org.hackillinois.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1136,7 +1156,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 8VNQTQM2L6;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1150,6 +1170,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 2020.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = org.hackillinois.HIAPI;
@@ -1172,7 +1193,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 8VNQTQM2L6;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1186,6 +1207,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 2020.1;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = org.hackillinois.HIAPI;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";

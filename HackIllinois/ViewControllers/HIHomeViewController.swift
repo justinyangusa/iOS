@@ -68,6 +68,7 @@ class HIHomeViewController: HIEventListViewController {
 
     private var timer: Timer?
     private var eventTableView = HITableView()
+    private var buildingView = UIImageView()
 }
 
 // MARK: - Actions
@@ -99,7 +100,7 @@ extension HIHomeViewController {
         super.loadView()
 
         view.addSubview(countdownTitleLabel)
-        countdownTitleLabel.constrain(to: view.safeAreaLayoutGuide, topInset: 20, trailingInset: 0, leadingInset: 0)
+        countdownTitleLabel.constrain(to: view, topInset: 60, trailingInset: 0, leadingInset: 0)
 
         countdownViewController.view.translatesAutoresizingMaskIntoConstraints = false
         addChild(countdownViewController)
@@ -115,6 +116,12 @@ extension HIHomeViewController {
         eventTableView.constrain(to: view, bottomInset: 0)
         eventTableView.contentInset = UIEdgeInsets(top: 30, left: 0, bottom: 0, right: 0)
         eventTableView.scrollIndicatorInsets = UIEdgeInsets(top: 30, left: 0, bottom: 0, right: 0)
+        buildingView.contentMode = .scaleAspectFill
+        buildingView.translatesAutoresizingMaskIntoConstraints = false
+        buildingView.isUserInteractionEnabled = true
+        view.insertSubview(buildingView, at: 1)
+        buildingView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        buildingView.topAnchor.constraint(equalTo: countdownViewController.view.centerYAnchor).isActive = true
     }
 
     override func viewDidLoad() {
@@ -146,11 +153,11 @@ extension HIHomeViewController {
 
 }
 
-// MARK: - UINavigationItem Setup
+// MARK: - UIImageView Setup
 extension HIHomeViewController {
-    @objc dynamic override func setupNavigationItem() {
-        super.setupNavigationItem()
-        title = "HOME"
+    @objc dynamic override func setUpBackgroundView() {
+        super.setUpBackgroundView()
+        buildingView.image = #imageLiteral(resourceName: "Buildings")
     }
 }
 
@@ -196,7 +203,7 @@ extension HIHomeViewController {
 // MARK: - UITabBarItem Setup
 extension HIHomeViewController {
     override func setupTabBarItem() {
-        tabBarItem = UITabBarItem(title: "Home", image: #imageLiteral(resourceName: "home"), tag: 0)
+        tabBarItem = UITabBarItem(title: "", image: #imageLiteral(resourceName: "home"), tag: 0)
     }
 }
 
