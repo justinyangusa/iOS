@@ -71,8 +71,13 @@ extension HIEventListViewController {
 // MARK: - HIEventCellDelegate
 extension HIEventListViewController: HIEventCellDelegate {
     func eventCellDidSelectFavoriteButton(_ eventCell: HIEventCell) {
+
         guard let indexPath = eventCell.indexPath,
             let event = _fetchedResultsController?.object(at: indexPath) as? Event else { return }
+
+        if eventCell.favoritedButton.isActive { //TODO: Also favorite button selected
+            updateIndexPaths(oldIndexPath: indexPath)
+        }
 
         let changeFavoriteStatusRequest: APIRequest<EventFavorites> =
             eventCell.favoritedButton.isActive ?
@@ -96,7 +101,32 @@ extension HIEventListViewController: HIEventCellDelegate {
         .authorize(with: HIApplicationStateController.shared.user)
         .launch()
     }
+
+    func updateIndexPaths(oldIndexPath: IndexPath) {
+        if let tableView = tableView {
+            let oldRow = oldIndexPath.row
+            let oldSection = oldIndexPath.section
+
+            for cell in tableView.visibleCells {
+                guard let eventCell = cell as? HIEventCell,
+                    var indexPath = eventCell.indexPath else { continue }
+
+                print("(Section, row): (\(indexPath.section),\(indexPath.row))")
+
+                // If the current section is the same as the old section
+                if oldSection == indexPath.section {
+
+                    // If the row being deleted is before, shift all rows in that section up by one
+                    if oldRow < indexPath.row {
+                        indexPath.row -= 1
+                        eventCell.indexPath = indexPath
+                    }
+                }
+            }
+        }
+    }
 }
+
 
 // MARK: - UIViewControllerPreviewingDelegate
 extension HIEventListViewController: UIViewControllerPreviewingDelegate {
