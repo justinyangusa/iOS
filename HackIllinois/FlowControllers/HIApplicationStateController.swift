@@ -13,6 +13,7 @@
 import Foundation
 import UIKit
 import Keychain
+import HIAPI
 
 class HIApplicationStateController {
 
@@ -129,6 +130,21 @@ extension HIApplicationStateController {
         HIEventDataSource.refresh()
         HIAnnouncementDataSource.refresh()
         HIProjectDataSource.refresh()
+    }
+    
+    func updateToken(user: HIUser) {
+        HIAPI.AuthService.refresh(code: user.oauthCode)
+            .onCompletion { [weak self] result in
+                do {
+                    let (apiToken, _) = try result.get()
+                    var user = user
+                    user.token = apiToken.token
+                    print("SUCCESS IN REFRESH")
+                } catch {
+                    print(error)
+                }
+        }
+        .launch()
     }
 
     func prepareLoginControllerForDisplay() { }

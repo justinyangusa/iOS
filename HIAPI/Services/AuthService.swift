@@ -51,5 +51,11 @@ public final class AuthService: BaseService {
     public static func getRoles() -> APIRequest<RolesContainer> {
         return APIRequest<RolesContainer>(service: self, endpoint: "roles/", method: .GET)
     }
+    
+    public static func refresh(code: String) -> APIRequest<Token> {
+        var body = HTTPParameters()
+        body["code"] = code
+        return APIRequest<Token>(service: self, endpoint: "refresh/", method: .GET)
+    }
 
 }
