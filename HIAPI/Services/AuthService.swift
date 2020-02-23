@@ -52,7 +52,7 @@ public final class AuthService: BaseService {
         return APIRequest<RolesContainer>(service: self, endpoint: "roles/", method: .GET)
     }
     
-    public static func refresh(code: String) -> APIRequest<Token> {
+    public static func refresh() -> APIRequest<Token> {
         return APIRequest<Token>(service: self, endpoint: "token/refresh/", method: .GET)
     }
 

@@ -84,7 +84,7 @@ extension HIApplicationStateController {
         guard let user = notification.userInfo?["user"] as? HIUser else { return }
         guard Keychain.default.store(user, forKey: HIConstants.STORED_ACCOUNT_KEY) else { return }
         self.user = user
-        if user.token.isEmpty { isGuest = true }
+        isGuest = user.roles.isEmpty
         HILocalNotificationController.shared.requestAuthorization()
         UIApplication.shared.registerForRemoteNotifications()
         updateWindowViewController(animated: true)
@@ -96,6 +96,15 @@ extension HIApplicationStateController {
         user = nil
         isGuest = false
         updateWindowViewController(animated: true)
+    }
+    
+    func forceLogout() {
+        logoutUser()
+        let alert = UIAlertController(title: "Your login session has expired, please login again.", message: "", preferredStyle: .alert)
+                   alert.addAction(
+                       UIAlertAction(title: "Ok", style: .default)
+                   )
+        HIApplicationStateController.shared.window.rootViewController?.present(alert, animated: true, completion: nil)
     }
 
     func updateWindowViewController(animated: Bool) {
@@ -132,19 +141,25 @@ extension HIApplicationStateController {
         HIProjectDataSource.refresh()
     }
 
-    func updateToken(user: HIUser) {
-        HIAPI.AuthService.refresh(code: user.oauthCode)
+    public func updateToken(user: HIUser) -> Bool {
+        var isValid = true
+
+        HIAPI.AuthService.refresh()
             .onCompletion { result in
                 do {
                     let (apiToken, _) = try result.get()
                     var user = user
                     user.token = apiToken.token
+                    HIApplicationStateController.shared.user = user
                 } catch {
+                    // TODO: Check if error is of type 403, then set isValid false
                     print(error)
                 }
         }
         .authorize(with: user)
         .launch()
+        
+        return isValid
     }
 
     func prepareLoginControllerForDisplay() { }
