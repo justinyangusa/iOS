@@ -70,7 +70,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
         UIApplication.shared.registerForRemoteNotifications()
-        guard let user = HIApplicationStateController.shared.user else { print("NO USER")
+        guard let user = HIApplicationStateController.shared.user, !HIApplicationStateController.shared.isGuest else { print("NO USER")
             return
         }
         HIApplicationStateController.shared.updateToken(user: user)

@@ -131,19 +131,19 @@ extension HIApplicationStateController {
         HIAnnouncementDataSource.refresh()
         HIProjectDataSource.refresh()
     }
-    
+
     func updateToken(user: HIUser) {
         HIAPI.AuthService.refresh(code: user.oauthCode)
-            .onCompletion { [weak self] result in
+            .onCompletion { result in
                 do {
                     let (apiToken, _) = try result.get()
                     var user = user
                     user.token = apiToken.token
-                    print("SUCCESS IN REFRESH")
                 } catch {
                     print(error)
                 }
         }
+        .authorize(with: user)
         .launch()
     }
 

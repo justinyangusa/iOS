@@ -53,9 +53,7 @@ public final class AuthService: BaseService {
     }
     
     public static func refresh(code: String) -> APIRequest<Token> {
-        var body = HTTPParameters()
-        body["code"] = code
-        return APIRequest<Token>(service: self, endpoint: "refresh/", method: .GET)
+        return APIRequest<Token>(service: self, endpoint: "token/refresh/", method: .GET)
     }
 
 }
